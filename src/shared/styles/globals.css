@@ -1,0 +1,22 @@
+ @import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+body {
+  font-family: "ObjectSans Regular", sans-serif;
+  font-weight: 400;
+  background: #2c2c2c;
+  @apply antialiased;
+}
+
+input:-webkit-autofill {
+  background-color: #4F4F4F;
+  color: white !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important; 
+}
+
+input:-webkit-autofill:focus {
+  background-color: #4F4F4F;
+  color: white !important; 
+}
