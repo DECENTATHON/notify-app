@@ -571,7 +571,7 @@ export default function DashboardPage() {
 
               {spendingPieData && (
                 <div className="flex-grow flex items-center justify-center">
-                  <div className="w-[95%] h-[320px] md:h-[360px]">
+                  <div className="w-[90%] h-[320px] md:h-[360px]">
                     <Pie
                       data={spendingPieData}
                       options={{
