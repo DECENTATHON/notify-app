@@ -1,5 +1,5 @@
-"use client"
-import React, { useState, useMemo, useEffect} from "react";
+"use client";
+import React, { useState, useMemo, useEffect } from "react";
 import { TotalService } from "@/entities/Total/Total.module";
 import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -113,14 +113,14 @@ export default function DashboardPage() {
   const [uploading, setUploading] = useState(false);
   const queryClient = useQueryClient();
   const [transactionsPath, setTransactionsPath] = useState("");
-const [transfersPath, setTransfersPath] = useState("");
+  const [transfersPath, setTransfersPath] = useState("");
 
-useEffect(() => {
-  const transactions = localStorage.getItem("transactions_path") || "";
-  const transfers = localStorage.getItem("transfers_path") || "";
-  setTransactionsPath(transactions);
-  setTransfersPath(transfers);
-}, []);
+  useEffect(() => {
+    const transactions = localStorage.getItem("transactions_path") || "";
+    const transfers = localStorage.getItem("transfers_path") || "";
+    setTransactionsPath(transactions);
+    setTransfersPath(transfers);
+  }, []);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["predictRulesPaths", transactionsPath, transfersPath],
@@ -455,7 +455,41 @@ useEffect(() => {
                   <div className="rounded border p-3 md:flex-1 max-h-[300px] overflow-y-auto mt-[100px] min-w-[300px]">
                     <div className="mb-3 text-sm font-medium">Все продукты</div>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                      {allProducts.map((p, idx) => {
+                      {allProducts
+                        .filter((p) => p.key !== "top3_push")
+                        .map((p, idx) => {
+                          const pct = Number(p.pct);
+                          const validPct = isNaN(pct) ? 0 : pct;
+
+                          const getColor = (pct: number) => {
+                            if (pct >= 75) return "bg-green-500";
+                            if (pct >= 50) return "bg-yellow-500";
+                            if (pct >= 25) return "bg-orange-400";
+                            return "bg-gray-300";
+                          };
+
+                          return (
+                            <div
+                              key={p.key}
+                              className="flex items-center justify-between rounded bg-white shadow-sm hover:shadow-md transition p-2"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`w-2.5 h-2.5 rounded-full ${getColor(validPct)}`}
+                                  title={`${validPct}%`}
+                                />
+                                <span className="text-sm">
+                                  {getProductName(p.key)}
+                                </span>
+                              </div>
+                              <span className="text-sm font-semibold">
+                                {validPct}%
+                              </span>
+                            </div>
+                          );
+                        })}
+
+                      {/* {allProducts.map((p, idx) => {
                         const getColor = (pct: number) => {
                           if (pct >= 75) return "bg-green-500";
                           if (pct >= 50) return "bg-yellow-500";
@@ -482,7 +516,7 @@ useEffect(() => {
                             </span>
                           </div>
                         );
-                      })}
+                      })} */}
                     </div>
                   </div>
                 </div>

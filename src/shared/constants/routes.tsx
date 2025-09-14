@@ -12,6 +12,6 @@ import {
 
 export const sidebarRoutes = [
     { href: '/main', label: 'Кабинет менеджера', icon: <HomeOutlined /> },
-    { href: '/notify', label: 'Уведомления', icon: <TeamOutlined /> },
+    // { href: '/notify', label: 'Уведомления', icon: <TeamOutlined /> },
     // { href: '/', label: 'Выйти', icon: <LogoutOutlined /> },
 ];
