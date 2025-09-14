@@ -1,28 +1,29 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 exports.__esModule = true;
 var axios_1 = require("@/shared/lib/axios");
 var api = {
-    audioStatistics: "/v1/audio/statistics"
+    predictRulesPaths: "/predict_distilled_paths",
+    uploadCsv: "/upload",
+    downloadFile: function (filename) { return "/download/" + filename; }
 };
 var TotalService = /** @class */ (function () {
     function TotalService() {
     }
-    TotalService.prototype.getAudioStatistics = function (_a) {
-        var start_date = _a.start_date, end_date = _a.end_date;
-        var token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        return axios_1.fetcher.post(api.audioStatistics, { start_date: start_date, end_date: end_date }, {
-            headers: __assign({}, (token && { Authorization: "Bearer " + token }))
+    TotalService.prototype.predictRulesPaths = function (data) {
+        return axios_1.fetcher.post(api.predictRulesPaths, data);
+    };
+    TotalService.prototype.uploadCsv = function (file) {
+        var formData = new FormData();
+        formData.append("file", file);
+        return axios_1.fetcher.post(api.uploadCsv, formData, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        });
+    };
+    TotalService.prototype.downloadFile = function (filename) {
+        return axios_1.fetcher.get(api.downloadFile(filename), {
+            responseType: "blob"
         });
     };
     return TotalService;

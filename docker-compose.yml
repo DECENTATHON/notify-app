@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    image: $APP_IMAGE_TAG
+    container_name: notify-dashboard-container
+    env_file: .env
+    ports:
+      - "3000:3000"
+    networks: [ frontend ]
+    volumes:
+      - notify-dashboard-media-data:/app/public/uploads
+    restart: always
+
+networks:
+  frontend:
+    driver: bridge
+
+volumes:
+  admin-dashboard-media-data:
+    driver: local

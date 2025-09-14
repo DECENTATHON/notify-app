@@ -1,31 +1,32 @@
 import { fetcher } from "@/shared/lib/axios";
 
 const api = {
-  audioStatistics: "/v1/audio/statistics",
+  predictRulesPaths: "/predict_distilled_paths",
+  uploadCsv: "/upload",
+  downloadFile: (filename: string) => `/download/${filename}`,
 };
 
 class TotalService {
-  getAudioStatistics({
-    start_date,
-    end_date,
-  }: {
-    start_date: string;
-    end_date: string;
-  }): Promise<any> {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-    return fetcher.post(
-      api.audioStatistics,
-      { start_date, end_date },
-      {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      }
-    );
+  predictRulesPaths(data: any): Promise<any> {
+    return fetcher.post(api.predictRulesPaths, data);
   }
 
+  uploadCsv(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetcher.post(api.uploadCsv, formData, {
+      // headers: {
+      //   "Content-Type": "multipart/form-data",
+      // },
+    });
+  }
+
+  downloadFile(filename: string): Promise<Blob> {
+    return fetcher.get(api.downloadFile(filename), {
+      responseType: "blob",
+    });
+  }
 }
 
 export default new TotalService();
