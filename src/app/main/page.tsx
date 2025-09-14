@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useMemo } from "react";
+"use client"
+import React, { useState, useMemo, useEffect} from "react";
 import { TotalService } from "@/entities/Total/Total.module";
 import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -112,12 +112,29 @@ export default function DashboardPage() {
   const [transfersFile, setTransfersFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const queryClient = useQueryClient();
-  const [transactionsPath, setTransactionsPath] = useState(
-    localStorage.getItem("transactions_path") || ""
-  );
-  const [transfersPath, setTransfersPath] = useState(
-    localStorage.getItem("transfers_path") || ""
-  );
+  const [transactionsPath, setTransactionsPath] = useState("");
+const [transfersPath, setTransfersPath] = useState("");
+
+useEffect(() => {
+  const transactions = localStorage.getItem("transactions_path") || "";
+  const transfers = localStorage.getItem("transfers_path") || "";
+  setTransactionsPath(transactions);
+  setTransfersPath(transfers);
+}, []);
+
+  // useEffect(() => {
+  //   const transactions = localStorage.getItem("transactions_path") || "";
+  //   const transfers = localStorage.getItem("transfers_path") || "";
+  //   setTransactionsPath(transactions);
+  //   setTransfersPath(transfers);
+  // }, []);
+
+  // const [transactionsPath, setTransactionsPath] = useState(
+  //   localStorage.getItem("transactions_path") || ""
+  // );
+  // const [transfersPath, setTransfersPath] = useState(
+  //   localStorage.getItem("transfers_path") || ""
+  // );
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["predictRulesPaths", transactionsPath, transfersPath],
@@ -558,7 +575,6 @@ export default function DashboardPage() {
         okText="Получить анализ"
         okButtonProps={{ disabled: false }}
         cancelText="Отмена"
-        destroyOnClose
       >
         <div className="mb-4">
           <div className="mb-1 font-medium">
