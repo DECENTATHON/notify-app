@@ -32,6 +32,13 @@ import {
   WarningOutlined,
   BankOutlined,
   UploadOutlined,
+  DownloadOutlined,
+  SwapOutlined,
+  HomeOutlined,
+  MoneyCollectOutlined,
+  DollarCircleOutlined,
+  LineChartOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 
 import AvatarIcon from "@/shared/assets/images/photo.svg";
@@ -226,6 +233,38 @@ export default function DashboardPage() {
     [prediction]
   );
 
+  const allProductsPieData = useMemo(() => {
+    if (!allProducts.length) return null;
+
+    return {
+      labels: allProducts.map((p) => getProductName(p.key)),
+      datasets: [
+        {
+          label: "Интерес (%)",
+          data: allProducts.map((p) => p.pct),
+          backgroundColor: allProducts.map((_, i) => {
+            const palette = [
+              "#1890ff",
+              "#ffc53d",
+              "#52c41a",
+              "#ff4d4f",
+              "#13c2c2",
+              "#faad14",
+              "#73d13d",
+              "#9254de",
+              "#f759ab",
+              "#d46b08",
+              "#597ef7",
+              "#ff85c0",
+            ];
+            return palette[i % palette.length];
+          }),
+          borderWidth: 1,
+        },
+      ],
+    };
+  }, [allProducts]);
+
   {
     transfersFile && (
       <div style={{ marginTop: 8, color: "#52c41a" }}>
@@ -260,6 +299,13 @@ export default function DashboardPage() {
             icon={<UploadOutlined />}
           >
             Загрузить файлы CSV
+          </Button>
+          <Button
+            onClick={() => setModalOpen(true)}
+            size="large"
+            icon={<DownloadOutlined />}
+          >
+            Скачать анализ
           </Button>
         </div>
       </div>
@@ -338,7 +384,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </Card>
-
               <Card title="Движение денег за 3 мес.">
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <Kpi
@@ -353,7 +398,7 @@ export default function DashboardPage() {
                   />
                   <Kpi
                     icon={<WarningOutlined />}
-                    label="Транзакций (KZT)"
+                    label="Транзакций"
                     value={prediction?.tx_count}
                     format="int"
                   />
@@ -362,8 +407,55 @@ export default function DashboardPage() {
                     label="Общий расход (KZT)"
                     value={prediction?.tx_amount_sum}
                   />
+                  <Kpi
+                    icon={<BankOutlined />}
+                    label="Снятия с банкомата"
+                    value={prediction?.atm_withdrawal_out}
+                  />
+                  <Kpi
+                    icon={<SwapOutlined />}
+                    label="P2P переводы"
+                    value={prediction?.p2p_out}
+                  />
+                  <Kpi
+                    icon={<CreditCardOutlined />}
+                    label="Покупки по карте"
+                    value={prediction?.card_out}
+                  />
+                  <Kpi
+                    icon={<HomeOutlined />}
+                    label="Коммунальные платежи"
+                    value={prediction?.utilities_out}
+                  />
+                  <Kpi
+                    icon={<MoneyCollectOutlined />}
+                    label="Платежи по займам"
+                    value={prediction?.loan_payment_out_out}
+                  />
+                  <Kpi
+                    icon={<DollarCircleOutlined />}
+                    label="Покупка валюты"
+                    value={prediction?.fx_buy_sum}
+                  />
+                  <Kpi
+                    icon={<DollarCircleOutlined />}
+                    label="Продажа валюты"
+                    value={prediction?.fx_sell_sum}
+                  />
+                  <Kpi
+                    icon={<LineChartOutlined />}
+                    label="Стандартное отклонение (нетто)"
+                    value={prediction?.net_std_3m}
+                  />
+                  <Kpi
+                    icon={<CheckCircleOutlined />}
+                    label="Мес. с положит. нетто"
+                    value={prediction?.months_pos_net}
+                  />
                 </div>
               </Card>
+
+
             </div>
 
             <div className="flex flex-col gap-6">
@@ -403,7 +495,6 @@ export default function DashboardPage() {
                             className="mt-4 p-4 rounded-lg"
                             style={{
                               backgroundColor: `${color}10`,
-                              // borderLeft: `4px solid ${color}`,
                             }}
                           >
                             <div
@@ -437,18 +528,27 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-6">
-                  <Card
-                    title="Распределение интереса (топ-3)"
-                    className="md:flex-0.5"
-                  >
-                    <div className="w-[95%] h-[320px] md:h-[360px] mx-auto">
-                      <Pie
-                        data={pieData}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                        }}
-                      />
+                  <Card title="Все продукты" className="md:flex-0.5">
+                  <div className="w-full h-[420px] md:h-[500px] mx-auto">
+
+                      {allProductsPieData ? (
+                        <Pie
+                          data={allProductsPieData}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                position: "bottom" as const,
+                              },
+                            },
+                          }}
+                        />
+                      ) : (
+                        <div className="text-center text-gray-500">
+                          Нет данных для отображения
+                        </div>
+                      )}
                     </div>
                   </Card>
 
@@ -488,35 +588,6 @@ export default function DashboardPage() {
                             </div>
                           );
                         })}
-
-                      {/* {allProducts.map((p, idx) => {
-                        const getColor = (pct: number) => {
-                          if (pct >= 75) return "bg-green-500";
-                          if (pct >= 50) return "bg-yellow-500";
-                          if (pct >= 25) return "bg-orange-400";
-                          return "bg-gray-300";
-                        };
-
-                        return (
-                          <div
-                            key={p.key}
-                            className="flex items-center justify-between rounded bg-white shadow-sm hover:shadow-md transition p-2"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`w-2.5 h-2.5 rounded-full ${getColor(p.pct)}`}
-                                title={`${p.pct}%`}
-                              />
-                              <span className="text-sm">
-                                {getProductName(p.key)}
-                              </span>
-                            </div>
-                            <span className="text-sm font-semibold">
-                              {p.pct}%
-                            </span>
-                          </div>
-                        );
-                      })} */}
                     </div>
                   </div>
                 </div>
@@ -713,8 +784,17 @@ export default function DashboardPage() {
 const kpiColors = {
   inflow: "#52c41a",
   outflow: "#ff4d4f",
-  txCount: "#faad14",
-  txAmountSum: "#1890ff",
+  txCount: "#1890ff",
+  txAmountSum: "#faad14", 
+  atm: "#13c2c2",
+  p2p: "#722ed1",
+  card: "#2f54eb",
+  utilities: "#9254de",
+  loans: "#fa541c",
+  fxBuy: "#597ef7",
+  fxSell: "#85a5ff",
+  netStd: "#a0d911",
+  posNet: "#eb2f96",
 };
 
 function Kpi({
@@ -733,6 +813,15 @@ function Kpi({
   else if (label.includes("Исходящие")) color = kpiColors.outflow;
   else if (label.includes("Транзакций")) color = kpiColors.txCount;
   else if (label.includes("Общий расход")) color = kpiColors.txAmountSum;
+  else if (label.includes("Снятия с банкомата")) color = kpiColors.atm;
+  else if (label.includes("P2P")) color = kpiColors.p2p;
+  else if (label.includes("Покупки по карте")) color = kpiColors.card;
+  else if (label.includes("Коммунальные")) color = kpiColors.utilities;
+  else if (label.includes("Платежи по займам")) color = kpiColors.loans;
+  else if (label.includes("Покупка валюты")) color = kpiColors.fxBuy;
+  else if (label.includes("Продажа валюты")) color = kpiColors.fxSell;
+  else if (label.includes("отклонение")) color = kpiColors.netStd;
+  else if (label.includes("положит")) color = kpiColors.posNet;  
 
   const display =
     value != null
