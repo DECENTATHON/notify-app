@@ -215,23 +215,23 @@ export default function DashboardPage() {
     };
   }, [prediction]);
 
-  const pieData = useMemo(
-    () => ({
-      labels: prediction?.top3?.map((key: string) => getProductName(key)) || [],
-      datasets: [
-        {
-          label: "Интерес (%)",
-          data:
-            prediction?.top3?.map((key: string) =>
-              Number((prediction[key] * 100).toFixed(2))
-            ) || [],
-          backgroundColor: ["#1890ff", "#ffc53d", "#52c41a"],
-          borderWidth: 1,
-        },
-      ],
-    }),
-    [prediction]
-  );
+  // const pieData = useMemo(
+  //   () => ({
+  //     labels: prediction?.top3?.map((key: string) => getProductName(key)) || [],
+  //     datasets: [
+  //       {
+  //         label: "Интерес (%)",
+  //         data:
+  //           prediction?.top3?.map((key: string) =>
+  //             Number((prediction[key] * 100).toFixed(2))
+  //           ) || [],
+  //         backgroundColor: ["#1890ff", "#ffc53d", "#52c41a"],
+  //         borderWidth: 1,
+  //       },
+  //     ],
+  //   }),
+  //   [prediction]
+  // );
 
   const allProductsPieData = useMemo(() => {
     if (!allProducts.length) return null;
@@ -301,7 +301,7 @@ export default function DashboardPage() {
             Загрузить файлы CSV
           </Button>
           <Button
-            onClick={() => setModalOpen(true)}
+            // onClick={() => setModalOpen(true)}
             size="large"
             icon={<DownloadOutlined />}
           >
