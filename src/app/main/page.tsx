@@ -122,20 +122,6 @@ useEffect(() => {
   setTransfersPath(transfers);
 }, []);
 
-  // useEffect(() => {
-  //   const transactions = localStorage.getItem("transactions_path") || "";
-  //   const transfers = localStorage.getItem("transfers_path") || "";
-  //   setTransactionsPath(transactions);
-  //   setTransfersPath(transfers);
-  // }, []);
-
-  // const [transactionsPath, setTransactionsPath] = useState(
-  //   localStorage.getItem("transactions_path") || ""
-  // );
-  // const [transfersPath, setTransfersPath] = useState(
-  //   localStorage.getItem("transfers_path") || ""
-  // );
-
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["predictRulesPaths", transactionsPath, transfersPath],
     queryFn: () =>
