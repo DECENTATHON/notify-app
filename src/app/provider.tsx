@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { ConfigProvider } from "antd";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/shared/setup/query/queryClient";
+import { queryClient } from "@/shared/query/queryClient";
 
 interface Props {
   children: ReactNode;
