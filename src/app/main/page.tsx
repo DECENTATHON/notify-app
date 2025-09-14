@@ -154,6 +154,35 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDownload = async () => {
+    const filePath = data?.data?.[0]?.file;
+
+    if (!filePath) {
+      message.error("Файл не найден в ответе анализа.");
+      return;
+    }
+
+    try {
+      const blob = await TotalService.downloadFile(filePath);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+
+      const link = document.createElement("a");
+      link.href = url;
+
+      const fileNameFromPath = filePath.split("/").pop() || "analyzed_file.csv";
+      link.setAttribute("download", fileNameFromPath);
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      message.success("Файл успешно скачан.");
+    } catch (error) {
+      console.error(error);
+      message.error("Ошибка при скачивании файла.");
+    }
+  };
+
   const beforeUpload = (file: File) => {
     const isCsv = file.type === "text/csv" || file.name.endsWith(".csv");
     if (!isCsv) {
@@ -300,13 +329,22 @@ export default function DashboardPage() {
           >
             Загрузить файлы CSV
           </Button>
-          <Button
+          {/* <Button
+            onClick={handleDownload}
+            size="large"
+            icon={<DownloadOutlined />}
+            disabled={!data?.data?.[0]?.file}
+          >
+            Скачать анализ
+          </Button> */}
+
+          {/* <Button
             // onClick={() => setModalOpen(true)}
             size="large"
             icon={<DownloadOutlined />}
           >
             Скачать анализ
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -454,8 +492,6 @@ export default function DashboardPage() {
                   />
                 </div>
               </Card>
-
-
             </div>
 
             <div className="flex flex-col gap-6">
@@ -529,8 +565,7 @@ export default function DashboardPage() {
 
                 <div className="flex flex-col md:flex-row gap-6">
                   <Card title="Все продукты" className="md:flex-0.5">
-                  <div className="w-full h-[420px] md:h-[500px] mx-auto">
-
+                    <div className="w-full h-[420px] md:h-[500px] mx-auto">
                       {allProductsPieData ? (
                         <Pie
                           data={allProductsPieData}
@@ -557,6 +592,7 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                       {allProducts
                         .filter((p) => p.key !== "top3_push")
+                        .filter((p) => p.key !== "file")
                         .map((p, idx) => {
                           const pct = Number(p.pct);
                           const validPct = isNaN(pct) ? 0 : pct;
@@ -785,7 +821,7 @@ const kpiColors = {
   inflow: "#52c41a",
   outflow: "#ff4d4f",
   txCount: "#1890ff",
-  txAmountSum: "#faad14", 
+  txAmountSum: "#faad14",
   atm: "#13c2c2",
   p2p: "#722ed1",
   card: "#2f54eb",
@@ -821,7 +857,7 @@ function Kpi({
   else if (label.includes("Покупка валюты")) color = kpiColors.fxBuy;
   else if (label.includes("Продажа валюты")) color = kpiColors.fxSell;
   else if (label.includes("отклонение")) color = kpiColors.netStd;
-  else if (label.includes("положит")) color = kpiColors.posNet;  
+  else if (label.includes("положит")) color = kpiColors.posNet;
 
   const display =
     value != null

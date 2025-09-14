@@ -3,7 +3,7 @@ import { fetcher } from "@/shared/lib/axios";
 const api = {
   predictRulesPaths: "/predict_distilled_paths",
   uploadCsv: "/upload",
-  downloadFile: (filename: string) => `/download/${filename}`,
+  downloadFile: (filename: string) => `/download2/${filename}`,
 };
 
 class TotalService {
